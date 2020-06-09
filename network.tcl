@@ -2,6 +2,8 @@ proc randGen {min max} {
     return [expr int(rand()*($max - $min + 1)) + $min] 
 }
 
+set type "Reno"
+
 set ns [new Simulator]
 
 set trace_file [open "out.tr" w]
@@ -42,17 +44,27 @@ $ns queue-limit $n3 $n4 10
 $ns queue-limit $n4 $n5 10
 $ns queue-limit $n4 $n6 10
 
-
-set tcp1 [new Agent/TCP]
-$tcp1 set class_ 1
+if {$type == "Tahoe"} {
+    set tcp1 [new Agent/TCP]
+    set tcp2 [new Agent/TCP]
+} else {
+    set tcp1 [new Agent/TCP/$type]
+    set tcp2 [new Agent/TCP/$type]
+}
 
 set tcp5 [new Agent/TCPSink]
+set tcp6 [new Agent/TCPSink]
+
+$tcp1 set class_ 1
+$tcp1 set fid_ 1
+$tcp1 set packtsize_ 960
+
 $tcp5 set class_ 1
 
-set tcp2 [new Agent/TCP]
 $tcp2 set class_ 2
+$tcp2 set fid_ 2
+$tcp2 set packtsize_ 960
 
-set tcp6 [new Agent/TCPSink]
 $tcp6 set class_ 2
 
 
@@ -72,6 +84,8 @@ set ftp2 [new Application/FTP]
 $ftp1 attach-agent $tcp1
 $ftp2 attach-agent $tcp2
 
+$tcp1 attach $trace_file
+$tcp1 tracevar cwnd_
 
 proc finish {} {
     global ns trace_file nam_file

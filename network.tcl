@@ -1,16 +1,19 @@
 proc randGen {min max} { 
     return [expr int(rand()*($max - $min + 1)) + $min] 
 }
-proc doSimulation {type number} {
+proc doSimulation {type number verbose} {
 
     global ns trace_file nam_file
 
     set ns [new Simulator]
 
-    set trace_file [open "$type$number.tr" w]
+    set trace_dir "results/tr/$type$number.tr"
+    set nam_dir "results/nam/$type$number.nam"
+
+    set trace_file [open $trace_dir w]
     $ns trace-all $trace_file
 
-    set nam_file [open "$type$number.nam" w]
+    set nam_file [open $nam_dir w]
     $ns namtrace-all $nam_file
 
 
@@ -59,12 +62,14 @@ proc doSimulation {type number} {
     $tcp1 set class_ 1
     $tcp1 set fid_ 1
     $tcp1 set packtsize_ 960
+    $tcp1 set ttl_ 64
 
     $tcp5 set class_ 1
 
     $tcp2 set class_ 2
     $tcp2 set fid_ 2
     $tcp2 set packtsize_ 960
+    $tcp2 set ttl_ 64
 
     $tcp6 set class_ 2
 
@@ -88,13 +93,17 @@ proc doSimulation {type number} {
     $tcp1 attach $trace_file
     $tcp1 tracevar cwnd_
 
-    proc finish {} {
+    proc finish { nam_dir show } {
         global ns trace_file nam_file
         $ns flush-trace
         close $trace_file
         close $nam_file
-        exec nam out.nam &
-        exit
+        if {$show == 1} {
+            exec nam  $nam_dir &
+            exit
+        } else {
+            exit 0   
+        }
     }
 
 
@@ -102,9 +111,13 @@ proc doSimulation {type number} {
     $ns at 0.0 "$ftp2 start"
     $ns at 2.0 "$ftp1 stop"
     $ns at 2.0 "$ftp2 stop"
-    $ns at 2.1 "finish"
+    $ns at 2.1 "finish $nam_dir $verbose"
 
     $ns run
 }
 
-doSimulation "Tahoe" 10
+# set types [list "Newreno" "Tahoe" "Vegas"]
+# doSimulation [lindex $types 1] 2 0
+set type [lindex $argv 0]
+set num [lindex $argv 1]
+doSimulation $type $num 0

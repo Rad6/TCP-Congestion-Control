@@ -92,13 +92,18 @@ proc doSimulation {type number verbose} {
 
     $tcp1 attach $trace_file
     $tcp1 tracevar cwnd_
+    $tcp1 tracevar rtt_
+
+    $tcp2 attach $trace_file
+    $tcp2 tracevar cwnd_
+    $tcp2 tracevar rtt_
 
     proc finish { nam_dir show } {
         global ns trace_file nam_file
         $ns flush-trace
         close $trace_file
         close $nam_file
-        if {$show == 1} {
+        if {$show == true} {
             exec nam  $nam_dir &
             exit
         } else {
@@ -120,4 +125,5 @@ proc doSimulation {type number verbose} {
 # doSimulation [lindex $types 1] 2 0
 set type [lindex $argv 0]
 set num [lindex $argv 1]
-doSimulation $type $num 0
+set verbose [lindex $argv 2]
+doSimulation $type $num $verbose

@@ -17,7 +17,7 @@ def execAllRuns():
     for each in types:
         for i in range (1, n_run + 1):
             command = "ns " + tcl_file + " " + each + " " + str(i) + " false"
-            print(command + "\n")
+            print(command)
             os.system(command)
 
 
@@ -56,21 +56,45 @@ def readAndParseAllData():
 
 def calculateAvgRtt():
     global rtt
-    result = []
+    flow1_result = []
+    flow2_result = []
     curr_vals = [0] * n_run
     rtt = sorted(rtt) # sort by time
-    for each in rtt:
-        print(each)
-        print("\n")
+    # for each in rtt:
+    #     print(each)
+    #     print("\n")
     for each in rtt:
         time_ = float(each[0])
         rtt_ = float(each[6])
+        src = int(each[1])
         run_id = int(each[len(each) - 1])
         curr_vals[run_id - 1] = rtt_
         avg = sum(curr_vals) / len(curr_vals)
-        result.append([time_, avg])
-    return result
+        flow1_result.append([time_, avg]) if (src == 0) else flow2_result.append([time_, avg])
+    return flow1_result, flow2_result
+
+
+def calculateAvgCwnd():
+    global cwnd
+    flow1_result = []
+    flow2_result = []
+    curr_vals = [0] * n_run
+    cwnd = sorted(cwnd) # sort by time
+    # for each in cwnd:
+    #     print(each)
+    #     print("\n")
+    for each in cwnd:
+        time_ = float(each[0])
+        cwnd_ = float(each[6])
+        src = int(each[1])
+        run_id = int(each[len(each) - 1])
+        curr_vals[run_id - 1] = cwnd_
+        avg = sum(curr_vals) / len(curr_vals)
+        flow1_result.append([time_, avg]) if (src == 0) else flow2_result.append([time_, avg])
+    return flow1_result, flow2_result
+
 
 execAllRuns()
 readAndParseAllData()
-calculateAvgRtt()
+f1_rtt, f2_rtt = calculateAvgRtt()
+f1_cwnd, f2_cwnd = calculateAvgCwnd()

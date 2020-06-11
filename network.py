@@ -111,7 +111,7 @@ def calculateAvgCwnd():
     vegas_f2 = []
     curr_vals = [0] * n_run
     cwnd = sorted(cwnd) # sort by time
-    # for each in rtt:
+    # for each in cwnd:
     #     print(each)
     #     print("\n")
     for each in cwnd:
@@ -142,9 +142,51 @@ def calculateAvgCwnd():
     return newreno_result, tahoe_result, vegas_result
 
 
-execAllRuns()
-readAndParseAllData()
+def calculateAvgDropped():
+    global dropped
+    newreno_f1 = []
+    newreno_f2 = []
+    tahoe_f1 = []
+    tahoe_f2 = []
+    vegas_f1 = []
+    vegas_f2 = []
+    curr_vals = [0] * n_run
+    dropped = sorted(dropped) # sort by time
+    # for each in dropped:
+    #     print(each)
+    #     print("\n")
+    for each in dropped:
+        time_ = float(each[1])
+        flow_id = int(each[7])
+        type_ = each[len(each) - 2]
+        run_id = int(each[len(each) - 1])
+        curr_vals[run_id - 1] += 1
+        avg = sum(curr_vals) / len(curr_vals)
+        if type_ == "Newreno":
+            newreno_f1.append([time_, avg]) if (flow_id == 1) else newreno_f2.append([time_, avg])
+        elif type_ == "Tahoe":
+            tahoe_f1.append([time_, avg]) if (flow_id == 1) else tahoe_f2.append([time_, avg])
+        else:
+            vegas_f1.append([time_, avg]) if (flow_id == 1) else vegas_f2.append([time_, avg])
+    
+    newreno_result = []
+    newreno_result.append(newreno_f1)
+    newreno_result.append(newreno_f2)
+    tahoe_result = []
+    tahoe_result.append(tahoe_f1)
+    tahoe_result.append(tahoe_f2)
+    vegas_result = []
+    vegas_result.append(vegas_f1)
+    vegas_result.append(vegas_f2)
 
-# each list is 3d : [flows][records][fields]
-rtt_newreno_result, rtt_tahoe_result, rtt_vegas_result = calculateAvgRtt()
-cwnd_newreno_result, cwnd_tahoe_result, cwnd_vegas_result = calculateAvgCwnd()
+    return newreno_result, tahoe_result, vegas_result
+
+
+if __name__ == '__main__':
+    execAllRuns()
+    readAndParseAllData()
+
+    # each list below is 3d : [flows][records][fields]
+    rtt_newreno_result, rtt_tahoe_result, rtt_vegas_result = calculateAvgRtt()
+    cwnd_newreno_result, cwnd_tahoe_result, cwnd_vegas_result = calculateAvgCwnd()
+    drp_newreno_result, drp_tahoe_result, drp_vegas_result = calculateAvgDropped()

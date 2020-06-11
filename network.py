@@ -58,7 +58,19 @@ def readAndParseAllData():
                     splt.append(type_)
                     splt.append(i)
                     dropped.append(splt)
-                
+
+
+def append_to_list(lst, time, value):
+    if len(lst) == 0:
+        lst.append([time, value])
+        return
+    if lst[-1][0] == time and lst[-1][1] == value:
+        return
+    if lst[-1][0] == time:
+        lst[-1][1] = (value + lst[-1][1])/2
+        return
+    lst.append([time, value])
+
 
 def calculateAvgRtt():
     global rtt
@@ -82,11 +94,11 @@ def calculateAvgRtt():
         curr_vals[run_id - 1] = rtt_
         avg = sum(curr_vals) / len(curr_vals)
         if type_ == "Newreno":
-            newreno_f1.append([time_, avg]) if (src == 0) else newreno_f2.append([time_, avg])
+            append_to_list(newreno_f1, time_, avg) if (src == 0) else append_to_list(newreno_f2, time_, avg)
         elif type_ == "Tahoe":
-            tahoe_f1.append([time_, avg]) if (src == 0) else tahoe_f2.append([time_, avg])
+            append_to_list(tahoe_f1, time_, avg) if (src == 0) else append_to_list(tahoe_f2, time_, avg)
         else:
-            vegas_f1.append([time_, avg]) if (src == 0) else vegas_f2.append([time_, avg])
+            append_to_list(vegas_f1, time_, avg) if (src == 0) else append_to_list(vegas_f2, time_, avg)
     
     newreno_result = []
     newreno_result.append(newreno_f1)
@@ -123,11 +135,11 @@ def calculateAvgCwnd():
         curr_vals[run_id - 1] = cwnd_
         avg = sum(curr_vals) / len(curr_vals)
         if type_ == "Newreno":
-            newreno_f1.append([time_, avg]) if (src == 0) else newreno_f2.append([time_, avg])
+            append_to_list(newreno_f1, time_, avg) if (src == 0) else append_to_list(newreno_f2, time_, avg)
         elif type_ == "Tahoe":
-            tahoe_f1.append([time_, avg]) if (src == 0) else tahoe_f2.append([time_, avg])
+            append_to_list(tahoe_f1, time_, avg) if (src == 0) else append_to_list(tahoe_f2, time_, avg)
         else:
-            vegas_f1.append([time_, avg]) if (src == 0) else vegas_f2.append([time_, avg])
+            append_to_list(vegas_f1, time_, avg) if (src == 0) else append_to_list(vegas_f2, time_, avg)
     
     newreno_result = []
     newreno_result.append(newreno_f1)
@@ -163,11 +175,11 @@ def calculateAvgDropped():
         curr_vals[run_id - 1] += 1
         avg = sum(curr_vals) / len(curr_vals)
         if type_ == "Newreno":
-            newreno_f1.append([time_, avg]) if (flow_id == 1) else newreno_f2.append([time_, avg])
+            append_to_list(newreno_f1, time_, avg) if (flow_id == 1) else append_to_list(newreno_f2, time_, avg)
         elif type_ == "Tahoe":
-            tahoe_f1.append([time_, avg]) if (flow_id == 1) else tahoe_f2.append([time_, avg])
+            append_to_list(tahoe_f1, time_, avg) if (flow_id == 1) else append_to_list(tahoe_f2, time_, avg)
         else:
-            vegas_f1.append([time_, avg]) if (flow_id == 1) else vegas_f2.append([time_, avg])
+            append_to_list(vegas_f1, time_, avg) if (flow_id == 1) else append_to_list(vegas_f2, time_, avg)
     
     newreno_result = []
     newreno_result.append(newreno_f1)

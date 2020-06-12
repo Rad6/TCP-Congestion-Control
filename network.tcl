@@ -1,7 +1,7 @@
 proc randGen {min max} { 
     return [expr int(rand()*($max - $min + 1)) + $min] 
 }
-proc doSimulation {type number verbose} {
+proc doSimulation {type number verbose max_time} {
 
     global ns trace_file nam_file
 
@@ -114,9 +114,9 @@ proc doSimulation {type number verbose} {
 
     $ns at 0.0 "$ftp1 start"
     $ns at 0.0 "$ftp2 start"
-    $ns at 200.0 "$ftp1 stop"
-    $ns at 200.0 "$ftp2 stop"
-    $ns at 200.1 "finish $nam_dir $verbose"
+    $ns at $max_time "$ftp1 stop"
+    $ns at $max_time "$ftp2 stop"
+    $ns at [expr $max_time + 0.1] "finish $nam_dir $verbose"
 
     $ns run
 }
@@ -126,4 +126,5 @@ proc doSimulation {type number verbose} {
 set type [lindex $argv 0]
 set num [lindex $argv 1]
 set verbose [lindex $argv 2]
-doSimulation $type $num $verbose
+set max_time [lindex $argv 3]
+doSimulation $type $num $verbose $max_time

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 tr_dir = "results/tr/"
 tcl_file = "network.tcl"
 types = ["Newreno", "Tahoe", "Vegas"]
-n_run = 10
+n_run = 4
 
 received = []
 dropped = []
@@ -123,10 +123,12 @@ def calculateAvgCwnd():
     vegas_f1 = []
     vegas_f2 = []
     curr_vals = [0] * n_run
-    cwnd = sorted(cwnd) # sort by time
-    # for each in cwnd:
-    #     print(each)
-    #     print("\n")
+    for each in cwnd:
+        each[0] = float(each[0])
+    cwnd.sort()
+    for each in cwnd:
+        print(each)
+        print("\n")
     for each in cwnd:
         time_ = float(each[0])
         cwnd_ = float(each[6])
@@ -207,12 +209,11 @@ if __name__ == '__main__':
     rtt_newreno_result, rtt_tahoe_result, rtt_vegas_result = calculateAvgRtt()
     cwnd_newreno_result, cwnd_tahoe_result, cwnd_vegas_result = calculateAvgCwnd()
     drp_newreno_result, drp_tahoe_result, drp_vegas_result = calculateAvgDropped()
-
     x = []
     y = []
-    for i in range(len(cwnd_newreno_result[1])):
-        print(cwnd_newreno_result[1][i])
-        x.append(cwnd_newreno_result[1][i][0])
-        y.append(cwnd_newreno_result[1][i][1])
-    plt.scatter(x, y)
-    plt.show()
+    # for i in range(len(cwnd_newreno_result[1])):
+    #     print(cwnd_newreno_result[1][i])
+    #     x.append(cwnd_newreno_result[1][i][0])
+    #     y.append(cwnd_newreno_result[1][i][1])
+    # plt.plot(x, y)
+    # plt.show()

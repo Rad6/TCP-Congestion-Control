@@ -234,9 +234,9 @@ if __name__ == '__main__':
     execAllRuns()
     readAndParseAllData()
 
-    plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs)")
-    plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs)")
-    plotByCalc(calculateAvgDropped, f"Dropped Average({n_run} Runs)")
+    plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)")
+    plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)")
+    plotByCalc(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)")
 
     # each list below is 3d : [flows][records][fields]
     # rtt_newreno_result, rtt_tahoe_result, rtt_vegas_result = calculateAvgRtt()

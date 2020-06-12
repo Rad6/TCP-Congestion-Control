@@ -82,7 +82,9 @@ def calculateAvgRtt():
     vegas_f1 = []
     vegas_f2 = []
     curr_vals = [0] * n_run
-    rtt = sorted(rtt) # sort by time
+    for each in rtt:
+        each[0] = float(each[0])
+    rtt.sort() # sort by time
     # for each in rtt:
     #     print(each)
     #     print("\n")
@@ -126,9 +128,9 @@ def calculateAvgCwnd():
     for each in cwnd:
         each[0] = float(each[0])
     cwnd.sort()
-    for each in cwnd:
-        print(each)
-        print("\n")
+    # for each in cwnd:
+    #     print(each)
+    #     print("\n")
     for each in cwnd:
         time_ = float(each[0])
         cwnd_ = float(each[6])
@@ -166,7 +168,9 @@ def calculateAvgDropped():
     vegas_f1 = []
     vegas_f2 = []
     curr_vals = [0] * n_run
-    dropped = sorted(dropped) # sort by time
+    for each in dropped:
+        each[1] = float(each[1])
+    dropped.sort() # sort by time
     # for each in dropped:
     #     print(each)
     #     print("\n")
@@ -212,7 +216,7 @@ if __name__ == '__main__':
     x = []
     y = []
     # for i in range(len(cwnd_newreno_result[1])):
-    #     print(cwnd_newreno_result[1][i])
+    #     # print(cwnd_newreno_result[1][i])
     #     x.append(cwnd_newreno_result[1][i][0])
     #     y.append(cwnd_newreno_result[1][i][1])
     # plt.plot(x, y)

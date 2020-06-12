@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 tr_dir = "results/tr/"
 tcl_file = "network.tcl"
 types = ["Newreno", "Tahoe", "Vegas"]
-n_run = 4
+n_run = 10
 
 received = []
 dropped = []
@@ -17,7 +17,7 @@ rtt = []
 def execAllRuns():
     for each in types:
         for i in range (1, n_run + 1):
-            command = "ns " + tcl_file + " " + each + " " + str(i) + " false"
+            command = "ns " + tcl_file + " " + each + " " + str(i) + " false"+ " 100"
             print(command)
             os.system(command)
 
@@ -213,11 +213,37 @@ if __name__ == '__main__':
     rtt_newreno_result, rtt_tahoe_result, rtt_vegas_result = calculateAvgRtt()
     cwnd_newreno_result, cwnd_tahoe_result, cwnd_vegas_result = calculateAvgCwnd()
     drp_newreno_result, drp_tahoe_result, drp_vegas_result = calculateAvgDropped()
-    x = []
-    y = []
-    # for i in range(len(cwnd_newreno_result[1])):
-    #     # print(cwnd_newreno_result[1][i])
-    #     x.append(cwnd_newreno_result[1][i][0])
-    #     y.append(cwnd_newreno_result[1][i][1])
-    # plt.plot(x, y)
-    # plt.show()
+    x_nr = []
+    y_nr = []
+    
+    x_ta = []
+    y_ta = []
+    
+    x_ve = []
+    y_ve = []
+
+    for i in range(len(cwnd_newreno_result[1])):
+        x_nr.append(cwnd_newreno_result[1][i][0])
+        y_nr.append(cwnd_newreno_result[1][i][1])
+
+    for i in range(len(cwnd_tahoe_result[1])):
+        x_ta.append(cwnd_tahoe_result[1][i][0])
+        y_ta.append(cwnd_tahoe_result[1][i][1])
+    
+    for i in range(len(cwnd_vegas_result[1])):
+        x_ve.append(cwnd_vegas_result[1][i][0])
+        y_ve.append(cwnd_vegas_result[1][i][1])
+
+    fig = plt.figure(figsize=(20,20))
+    ax = fig.add_subplot(111)
+    ax.plot(x_nr, y_nr)
+    ax.plot(x_ta, y_ta)
+    ax.plot(x_ve, y_ve)
+    plt.show()
+
+
+
+
+    # ax.plot(x_nr, y_nr, s=1.1, c='r', alpha='0.8')
+    # ax.plot(x_ta, y_ta, s=1.1, c='g', alpha='0.8')
+    # ax.plot(x_ve, y_ve, s=1.1, c='b', alpha='0.8')

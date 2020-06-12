@@ -1,4 +1,5 @@
 import os
+import matplotlib.pyplot as plt
 
 tr_dir = "results/tr/"
 tcl_file = "network.tcl"
@@ -194,6 +195,10 @@ def calculateAvgDropped():
     return newreno_result, tahoe_result, vegas_result
 
 
+# def calculateAvgGoodput():
+
+
+
 if __name__ == '__main__':
     execAllRuns()
     readAndParseAllData()
@@ -202,3 +207,12 @@ if __name__ == '__main__':
     rtt_newreno_result, rtt_tahoe_result, rtt_vegas_result = calculateAvgRtt()
     cwnd_newreno_result, cwnd_tahoe_result, cwnd_vegas_result = calculateAvgCwnd()
     drp_newreno_result, drp_tahoe_result, drp_vegas_result = calculateAvgDropped()
+
+    x = []
+    y = []
+    for i in range(len(cwnd_newreno_result[1])):
+        print(cwnd_newreno_result[1][i])
+        x.append(cwnd_newreno_result[1][i][0])
+        y.append(cwnd_newreno_result[1][i][1])
+    plt.scatter(x, y)
+    plt.show()

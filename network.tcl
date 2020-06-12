@@ -114,9 +114,9 @@ proc doSimulation {type number verbose} {
 
     $ns at 0.0 "$ftp1 start"
     $ns at 0.0 "$ftp2 start"
-    $ns at 2.0 "$ftp1 stop"
-    $ns at 2.0 "$ftp2 stop"
-    $ns at 2.1 "finish $nam_dir $verbose"
+    $ns at 1000.0 "$ftp1 stop"
+    $ns at 1000.0 "$ftp2 stop"
+    $ns at 1000.1 "finish $nam_dir $verbose"
 
     $ns run
 }

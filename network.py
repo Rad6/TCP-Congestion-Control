@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 tr_dir = "results/tr/"
 tcl_file = "network.tcl"
 types = ["Newreno", "Tahoe", "Vegas"]
-n_run = 10
-
+n_run = 1
+exec_time = 10
 received = []
 dropped = []
 enqueued = []
@@ -13,11 +13,10 @@ dequeued = []
 cwnd = []
 rtt = []
 
-
 def execAllRuns():
     for each in types:
         for i in range (1, n_run + 1):
-            command = "ns " + tcl_file + " " + each + " " + str(i) + " false"+ " 100"
+            command = "ns " + tcl_file + " " + each + " " + str(i) + " false"+ f" {exec_time}"
             print(command)
             os.system(command)
 
@@ -201,47 +200,76 @@ def calculateAvgDropped():
     return newreno_result, tahoe_result, vegas_result
 
 
-# def calculateAvgGoodput():
+def calculateAvgGoodput():
+    pass
 
-
+def plotByCalc(_func, _title):
+    mapper = {0 : 'NewReno', 1 : 'Tahoe', 2 : 'Vegas'}
+    data = [[] for i in range(3)]
+    data[0], data[1], data[2] = _func()
+    xy_data = [ [{'x' : [], 'y' : []} for _ in range(2)]  for _ in range(3)]
+    
+    for j, dt in enumerate(data):
+        for flow_num in range(2):
+            for i in range(len(dt[flow_num])):
+                xy_data[j][flow_num]['x'].append(dt[flow_num][i][0])
+                xy_data[j][flow_num]['y'].append(dt[flow_num][i][1])
+    
+    fig = plt.figure(figsize=(15,15))
+    ax = fig.add_subplot(111)
+    ax.set_xlabel("Time")
+    ax.set_ylabel("y")
+    ax.set_title(_title)
+    for _type, dt1 in enumerate(xy_data):
+        for _flow, dt2 in enumerate(dt1):
+            ax.scatter(dt2['x'], dt2['y'], alpha=0.65, label=f"{mapper[_type]} flow {_flow}")
+    ax.legend()
+    fig.savefig(f"Figs/{_title}")
+    plt.show()
 
 if __name__ == '__main__':
+    n_run = 4
+    exec_time = 100
+
     execAllRuns()
     readAndParseAllData()
 
+    plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs)")
+    plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs)")
+    plotByCalc(calculateAvgDropped, f"Dropped Average({n_run} Runs)")
+
     # each list below is 3d : [flows][records][fields]
-    rtt_newreno_result, rtt_tahoe_result, rtt_vegas_result = calculateAvgRtt()
-    cwnd_newreno_result, cwnd_tahoe_result, cwnd_vegas_result = calculateAvgCwnd()
-    drp_newreno_result, drp_tahoe_result, drp_vegas_result = calculateAvgDropped()
-    x_nr = []
-    y_nr = []
+    # rtt_newreno_result, rtt_tahoe_result, rtt_vegas_result = calculateAvgRtt()
+    # cwnd_newreno_result, cwnd_tahoe_result, cwnd_vegas_result = calculateAvgCwnd()
+    # # drp_newreno_result, drp_tahoe_result, drp_vegas_result = calculateAvgDropped()
+
+    # x_nr = []
+    # y_nr = []
     
-    x_ta = []
-    y_ta = []
+    # x_ta = []
+    # y_ta = []
     
-    x_ve = []
-    y_ve = []
+    # x_ve = []
+    # y_ve = []
 
-    for i in range(len(cwnd_newreno_result[1])):
-        x_nr.append(cwnd_newreno_result[1][i][0])
-        y_nr.append(cwnd_newreno_result[1][i][1])
+    # for i in range(len(cwnd_newreno_result[1])):
+    #     x_nr.append(cwnd_newreno_result[1][i][0])
+    #     y_nr.append(cwnd_newreno_result[1][i][1])
 
-    for i in range(len(cwnd_tahoe_result[1])):
-        x_ta.append(cwnd_tahoe_result[1][i][0])
-        y_ta.append(cwnd_tahoe_result[1][i][1])
+    # for i in range(len(cwnd_tahoe_result[1])):
+    #     x_ta.append(cwnd_tahoe_result[1][i][0])
+    #     y_ta.append(cwnd_tahoe_result[1][i][1])
     
-    for i in range(len(cwnd_vegas_result[1])):
-        x_ve.append(cwnd_vegas_result[1][i][0])
-        y_ve.append(cwnd_vegas_result[1][i][1])
+    # for i in range(len(cwnd_vegas_result[1])):
+    #     x_ve.append(cwnd_vegas_result[1][i][0])
+    #     y_ve.append(cwnd_vegas_result[1][i][1])
 
-    fig = plt.figure(figsize=(20,20))
-    ax = fig.add_subplot(111)
-    ax.plot(x_nr, y_nr)
-    ax.plot(x_ta, y_ta)
-    ax.plot(x_ve, y_ve)
-    plt.show()
-
-
+    # fig = plt.figure(figsize=(20,20))
+    # ax = fig.add_subplot(111)
+    # ax.scatter(x_nr, y_nr, s=1.1, c='r', alpha='0.8')
+    # ax.scatter(x_ta, y_ta, s=1.1, c='g', alpha='0.8')
+    # ax.scatter(x_ve, y_ve, s=1.1, c='b', alpha='0.8')
+    # plt.show()
 
 
     # ax.plot(x_nr, y_nr, s=1.1, c='r', alpha='0.8')

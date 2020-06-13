@@ -13,6 +13,7 @@ dequeued = []
 cwnd = []
 rtt = []
 
+
 def execAllRuns():
     for each in types:
         for i in range (1, n_run + 1):
@@ -39,15 +40,17 @@ def readAndParseAllData():
                     splt.append(i)
                     rtt.append(splt)
                 elif line[0] == '+':
-                    splt = line.split()
-                    splt.append(type_)
-                    splt.append(i)
-                    enqueued.append(splt)
+                    # splt = line.split()
+                    # splt.append(type_)
+                    # splt.append(i)
+                    # enqueued.append(splt)
+                    pass
                 elif line[0] == '-':
-                    splt = line.split()
-                    splt.append(type_)
-                    splt.append(i)
-                    dequeued.append(splt)
+                    # splt = line.split()
+                    # splt.append(type_)
+                    # splt.append(i)
+                    # dequeued.append(splt)
+                    pass
                 elif line[0] == 'r':
                     splt = line.split()
                     splt.append(type_)
@@ -80,21 +83,24 @@ def calculateAvgRtt():
     tahoe_f2 = []
     vegas_f1 = []
     vegas_f2 = []
-    curr_vals = [0] * n_run
+
+    # data structure for saving current values
+    # shape: [agent type][flow id][run number]
+    curr_vals = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
     for each in rtt:
         each[0] = float(each[0])
     rtt.sort() # sort by time
-    # for each in rtt:
-    #     print(each)
-    #     print("\n")
     for each in rtt:
         time_ = float(each[0])
         rtt_ = float(each[6])
         src = int(each[1])
+        flow_id = 0
+        if (src == 1):
+            flow_id = 1
         type_ = each[7]
-        run_id = int(each[len(each) - 1])
-        curr_vals[run_id - 1] = rtt_
-        avg = sum(curr_vals) / len(curr_vals)
+        run_id = int(each[len(each) - 1]) - 1
+        curr_vals[types.index(type_)][flow_id][run_id] = rtt_
+        avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
         if type_ == "Newreno":
             append_to_list(newreno_f1, time_, avg) if (src == 0) else append_to_list(newreno_f2, time_, avg)
         elif type_ == "Tahoe":
@@ -123,21 +129,24 @@ def calculateAvgCwnd():
     tahoe_f2 = []
     vegas_f1 = []
     vegas_f2 = []
-    curr_vals = [0] * n_run
+
+    # data structure for saving current values
+    # shape: [agent type][flow id][run number]
+    curr_vals = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
     for each in cwnd:
         each[0] = float(each[0])
     cwnd.sort()
-    # for each in cwnd:
-    #     print(each)
-    #     print("\n")
     for each in cwnd:
         time_ = float(each[0])
         cwnd_ = float(each[6])
         src = int(each[1])
+        flow_id = 0
+        if (src == 1):
+            flow_id = 1
         type_ = each[7]
-        run_id = int(each[len(each) - 1])
-        curr_vals[run_id - 1] = cwnd_
-        avg = sum(curr_vals) / len(curr_vals)
+        run_id = int(each[len(each) - 1]) - 1
+        curr_vals[types.index(type_)][flow_id][run_id] = cwnd_
+        avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
         if type_ == "Newreno":
             append_to_list(newreno_f1, time_, avg) if (src == 0) else append_to_list(newreno_f2, time_, avg)
         elif type_ == "Tahoe":
@@ -166,26 +175,27 @@ def calculateAvgDropped():
     tahoe_f2 = []
     vegas_f1 = []
     vegas_f2 = []
-    curr_vals = [0] * n_run
+
+    # data structure for saving current values
+    # shape: [agent type][flow id][run number]
+    curr_vals = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
     for each in dropped:
         each[1] = float(each[1])
     dropped.sort() # sort by time
-    # for each in dropped:
-    #     print(each)
-    #     print("\n")
     for each in dropped:
         time_ = float(each[1])
-        flow_id = int(each[7])
+        flow_id = int(each[7]) - 1
         type_ = each[len(each) - 2]
-        run_id = int(each[len(each) - 1])
-        curr_vals[run_id - 1] += 1
-        avg = sum(curr_vals) / len(curr_vals)
+        run_id = int(each[len(each) - 1]) - 1
+        curr_vals[types.index(type_)][flow_id][run_id] += 1
+        avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
+        avg /= time_
         if type_ == "Newreno":
-            append_to_list(newreno_f1, time_, avg) if (flow_id == 1) else append_to_list(newreno_f2, time_, avg)
+            append_to_list(newreno_f1, time_, avg) if (flow_id == 0) else append_to_list(newreno_f2, time_, avg)
         elif type_ == "Tahoe":
-            append_to_list(tahoe_f1, time_, avg) if (flow_id == 1) else append_to_list(tahoe_f2, time_, avg)
+            append_to_list(tahoe_f1, time_, avg) if (flow_id == 0) else append_to_list(tahoe_f2, time_, avg)
         else:
-            append_to_list(vegas_f1, time_, avg) if (flow_id == 1) else append_to_list(vegas_f2, time_, avg)
+            append_to_list(vegas_f1, time_, avg) if (flow_id == 0) else append_to_list(vegas_f2, time_, avg)
     
     newreno_result = []
     newreno_result.append(newreno_f1)
@@ -201,7 +211,49 @@ def calculateAvgDropped():
 
 
 def calculateAvgGoodput():
-    pass
+    global received
+    newreno_f1 = []
+    newreno_f2 = []
+    tahoe_f1 = []
+    tahoe_f2 = []
+    vegas_f1 = []
+    vegas_f2 = []
+
+    # data structure for saving current values
+    # shape: [agent type][flow id][run number]
+    curr_vals = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
+    for each in received:
+        each[1] = float(each[1])
+    received.sort() # sort by time
+    for each in received:
+        time_ = float(each[1])
+        dst_node = int(each[3])
+        if dst_node != 4 and dst_node != 5:
+            continue
+        flow_id = int(each[7]) - 1
+        type_ = each[len(each) - 2]
+        run_id = int(each[len(each) - 1]) - 1
+        curr_vals[types.index(type_)][flow_id][run_id] += 1
+        avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
+        avg *= (960*8)/(1e6*time_) # Mbps
+        if type_ == "Newreno":
+            append_to_list(newreno_f1, time_, avg) if (flow_id == 0) else append_to_list(newreno_f2, time_, avg)
+        elif type_ == "Tahoe":
+            append_to_list(tahoe_f1, time_, avg) if (flow_id == 0) else append_to_list(tahoe_f2, time_, avg)
+        else:
+            append_to_list(vegas_f1, time_, avg) if (flow_id == 0) else append_to_list(vegas_f2, time_, avg)
+    
+    newreno_result = []
+    newreno_result.append(newreno_f1)
+    newreno_result.append(newreno_f2)
+    tahoe_result = []
+    tahoe_result.append(tahoe_f1)
+    tahoe_result.append(tahoe_f2)
+    vegas_result = []
+    vegas_result.append(vegas_f1)
+    vegas_result.append(vegas_f2)
+
+    return newreno_result, tahoe_result, vegas_result
 
 def plotByCalc(_func, _title):
     mapper = {0 : 'NewReno', 1 : 'Tahoe', 2 : 'Vegas'}
@@ -222,7 +274,7 @@ def plotByCalc(_func, _title):
     ax.set_title(_title)
     for _type, dt1 in enumerate(xy_data):
         for _flow, dt2 in enumerate(dt1):
-            ax.scatter(dt2['x'], dt2['y'], alpha=0.65, label=f"{mapper[_type]} flow {_flow}")
+            ax.scatter(dt2['x'], dt2['y'], alpha=0.55, label=f"{mapper[_type]} flow {_flow}")
     ax.legend()
     fig.savefig(f"Figs/{_title}")
     plt.show()
@@ -247,15 +299,15 @@ def plotByCalc2(_func, _title):
         ax.set_ylabel("y")
         ax.set_title(f"{_title}_{mapper[_type]}")
         for _flow, dt2 in enumerate(dt1):
-            ax.scatter(dt2['x'], dt2['y'], alpha=0.65, label=f"{mapper[_type]} flow {_flow}")
+            ax.scatter(dt2['x'], dt2['y'], s=2, alpha=0.55, label=f"{mapper[_type]} flow {_flow}")
         ax.legend()
         fig.savefig(f"Figs/{_title}_{mapper[_type]}")
         plt.show()
 
 
 if __name__ == '__main__':
-    n_run = 4
-    exec_time = 100
+    n_run = 10
+    exec_time = 500
 
     execAllRuns()
     readAndParseAllData()
@@ -263,6 +315,7 @@ if __name__ == '__main__':
     plotByCalc2(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)")
     plotByCalc2(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)")
     plotByCalc2(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)")
+    plotByCalc2(calculateAvgGoodput, f"Goodput Average({n_run} Runs, {exec_time} Time)")
 
     # each list below is 3d : [flows][records][fields]
     # rtt_newreno_result, rtt_tahoe_result, rtt_vegas_result = calculateAvgRtt()

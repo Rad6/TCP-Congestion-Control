@@ -222,6 +222,7 @@ def calculateAvgGoodput():
     # data structure for saving current values
     # shape: [agent type][flow id][run number]
     curr_vals = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
+    curr_secs = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
     for each in received:
         each[1] = float(each[1])
     received.sort() # sort by time
@@ -233,9 +234,13 @@ def calculateAvgGoodput():
         flow_id = int(each[7]) - 1
         type_ = each[len(each) - 2]
         run_id = int(each[len(each) - 1]) - 1
-        curr_vals[types.index(type_)][flow_id][run_id] += 1
+        if int(time_) == curr_secs[types.index(type_)][flow_id][run_id]:
+            curr_vals[types.index(type_)][flow_id][run_id] += 1
+            continue
+        else:
+            curr_secs[types.index(type_)][flow_id][run_id] += 1
         avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
-        avg *= (960*8)/(1e6*time_) # Mbps
+        curr_vals[types.index(type_)][flow_id][run_id] = 1
         if type_ == "Newreno":
             append_to_list(newreno_f1, time_, avg) if (flow_id == 0) else append_to_list(newreno_f2, time_, avg)
         elif type_ == "Tahoe":
@@ -299,6 +304,7 @@ def plotByCalc2(_func, _title):
         ax.set_ylabel("y")
         ax.set_title(f"{_title}_{mapper[_type]}")
         for _flow, dt2 in enumerate(dt1):
+            print(len(dt2['x']))
             ax.scatter(dt2['x'], dt2['y'], s=2, alpha=0.55, label=f"{mapper[_type]} flow {_flow}")
         ax.legend()
         fig.savefig(f"Figs/{_title}_{mapper[_type]}")

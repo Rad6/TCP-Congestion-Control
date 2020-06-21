@@ -210,53 +210,101 @@ def calculateAvgDropped():
     return newreno_result, tahoe_result, vegas_result
 
 
-def calculateAvgGoodput():
-    global received
-    newreno_f1 = []
-    newreno_f2 = []
-    tahoe_f1 = []
-    tahoe_f2 = []
-    vegas_f1 = []
-    vegas_f2 = []
 
-    # data structure for saving current values
-    # shape: [agent type][flow id][run number]
-    curr_vals = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
-    curr_secs = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
+def calculateAvgGoodput():
+    # global received
+    # newreno_f1 = []
+    # newreno_f2 = []
+    # tahoe_f1 = []
+    # tahoe_f2 = []
+    # vegas_f1 = []
+    # vegas_f2 = []
+
+    # # data structure for saving current values
+    # # shape: [agent type][flow id][run number]
+    # curr_vals = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
+    # curr_secs = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
+    # for each in received:
+    #     each[1] = float(each[1])
+    # received.sort() # sort by time
+    # for each in received:
+    #     time_ = float(each[1])
+    #     dst_node = int(each[3])
+    #     if dst_node != 4 and dst_node != 5:
+    #         continue
+    #     flow_id = int(each[7]) - 1
+    #     type_ = each[len(each) - 2]
+    #     run_id = int(each[len(each) - 1]) - 1
+    #     if int(time_) == curr_secs[types.index(type_)][flow_id][run_id]:
+    #         curr_vals[types.index(type_)][flow_id][run_id] += 1
+    #         continue
+    #     else:
+    #         curr_secs[types.index(type_)][flow_id][run_id] += 1
+    #     avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
+    #     curr_vals[types.index(type_)][flow_id][run_id] = 1
+    #     if type_ == "Newreno":
+    #         append_to_list(newreno_f1, time_, avg) if (flow_id == 0) else append_to_list(newreno_f2, time_, avg)
+    #     elif type_ == "Tahoe":
+    #         append_to_list(tahoe_f1, time_, avg) if (flow_id == 0) else append_to_list(tahoe_f2, time_, avg)
+    #     else:
+    #         append_to_list(vegas_f1, time_, avg) if (flow_id == 0) else append_to_list(vegas_f2, time_, avg)
+    
+    # newreno_result = []
+    # newreno_result.append(newreno_f1)
+    # newreno_result.append(newreno_f2)
+    # tahoe_result = []
+    # tahoe_result.append(tahoe_f1)
+    # tahoe_result.append(tahoe_f2)
+    # vegas_result = []
+    # vegas_result.append(vegas_f1)
+    # vegas_result.append(vegas_f2)
+
+    # return newreno_result, tahoe_result, vegas_result
+
+    global received
+
+    # [type][flow][data]
+    results   = [ [ [] for i in range(2) ] for i in range(len(types)) ]
+    separated = [ [ [] for i in range(2) ] for i in range(len(types)) ]
+    # [type][flow]
+    counters  = [ [0]*2 for i in range(len(types)) ]
+    curr_secs = [ [0]*2 for i in range(len(types)) ]
+    
     for each in received:
         each[1] = float(each[1])
     received.sort() # sort by time
+
     for each in received:
-        time_ = float(each[1])
-        dst_node = int(each[3])
-        if dst_node != 4 and dst_node != 5:
-            continue
+        _type = each[len(each) - 2]
         flow_id = int(each[7]) - 1
-        type_ = each[len(each) - 2]
-        run_id = int(each[len(each) - 1]) - 1
-        if int(time_) == curr_secs[types.index(type_)][flow_id][run_id]:
-            curr_vals[types.index(type_)][flow_id][run_id] += 1
-            continue
-        else:
-            curr_secs[types.index(type_)][flow_id][run_id] += 1
-        avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
-        curr_vals[types.index(type_)][flow_id][run_id] = 1
-        if type_ == "Newreno":
-            append_to_list(newreno_f1, time_, avg) if (flow_id == 0) else append_to_list(newreno_f2, time_, avg)
-        elif type_ == "Tahoe":
-            append_to_list(tahoe_f1, time_, avg) if (flow_id == 0) else append_to_list(tahoe_f2, time_, avg)
-        else:
-            append_to_list(vegas_f1, time_, avg) if (flow_id == 0) else append_to_list(vegas_f2, time_, avg)
+        separated[types.index(_type)][flow_id].append(each)
+
+
+    for i in range (len(types)):
+        for j in range(2): # 2 flows
+            for each in separated[i][j]:
+                time_ = each[1]
+                dst_node = int(each[3])
+                if dst_node != 4 and dst_node != 5:
+                    continue
+                if int(time_) == curr_secs[i][j]:
+                    counters[i][j] += 1
+                    continue
+                point_time = curr_secs[i][j]
+                point_avg = counters[i][j] / n_run
+                results[i][j].append([point_time, point_avg])
+                curr_secs[i][j] += 1
+                counters[i][j] = 1
     
     newreno_result = []
-    newreno_result.append(newreno_f1)
-    newreno_result.append(newreno_f2)
+    newreno_result.append(results[0][0])
+    newreno_result.append(results[0][1])
     tahoe_result = []
-    tahoe_result.append(tahoe_f1)
-    tahoe_result.append(tahoe_f2)
+    tahoe_result.append(results[1][0])
+    tahoe_result.append(results[1][1])
     vegas_result = []
-    vegas_result.append(vegas_f1)
-    vegas_result.append(vegas_f2)
+    vegas_result.append(results[2][0])
+    vegas_result.append(results[2][1])
 
     return newreno_result, tahoe_result, vegas_result
 

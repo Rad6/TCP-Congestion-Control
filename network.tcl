@@ -61,14 +61,14 @@ proc doSimulation {type number verbose max_time} {
 
     $tcp1 set class_ 1
     $tcp1 set fid_ 1
-    $tcp1 set packtsize_ 960
+    # $tcp1 set packtsize_ 960
     $tcp1 set ttl_ 64
 
     $tcp5 set class_ 1
 
     $tcp2 set class_ 2
     $tcp2 set fid_ 2
-    $tcp2 set packtsize_ 960
+    # $tcp2 set packtsize_ 960
     $tcp2 set ttl_ 64
 
     $tcp6 set class_ 2

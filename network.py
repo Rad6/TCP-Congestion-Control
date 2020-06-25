@@ -76,20 +76,63 @@ def append_to_list(lst, time, value):
 
 
 def calculateAvgRtt():
-    global rtt
-    newreno_f1 = []
-    newreno_f2 = []
-    tahoe_f1 = []
-    tahoe_f2 = []
-    vegas_f1 = []
-    vegas_f2 = []
+    # global rtt
+    # newreno_f1 = []
+    # newreno_f2 = []
+    # tahoe_f1 = []
+    # tahoe_f2 = []
+    # vegas_f1 = []
+    # vegas_f2 = []
 
-    # data structure for saving current values
-    # shape: [agent type][flow id][run number]
+    # # data structure for saving current values
+    # # shape: [agent type][flow id][run number]
+    # curr_vals = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
+    # for each in rtt:
+    #     each[0] = float(each[0])
+    # rtt.sort() # sort by time
+    # for each in rtt:
+    #     time_ = float(each[0])
+    #     rtt_ = float(each[6])
+    #     src = int(each[1])
+    #     flow_id = 0
+    #     if (src == 1):
+    #         flow_id = 1
+    #     type_ = each[7]
+    #     run_id = int(each[len(each) - 1]) - 1
+    #     curr_vals[types.index(type_)][flow_id][run_id] = rtt_
+    #     avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
+    #     if type_ == "Newreno":
+    #         append_to_list(newreno_f1, time_, avg) if (src == 0) else append_to_list(newreno_f2, time_, avg)
+    #     elif type_ == "Tahoe":
+    #         append_to_list(tahoe_f1, time_, avg) if (src == 0) else append_to_list(tahoe_f2, time_, avg)
+    #     else:
+    #         append_to_list(vegas_f1, time_, avg) if (src == 0) else append_to_list(vegas_f2, time_, avg)
+    
+    # newreno_result = []
+    # newreno_result.append(newreno_f1)
+    # newreno_result.append(newreno_f2)
+    # tahoe_result = []
+    # tahoe_result.append(tahoe_f1)
+    # tahoe_result.append(tahoe_f2)
+    # vegas_result = []
+    # vegas_result.append(vegas_f1)
+    # vegas_result.append(vegas_f2)
+
+    # return newreno_result, tahoe_result, vegas_result
+
+    global rtt
+    newreno_f1 = [ [i, None] for i in range (exec_time) ]
+    newreno_f2 = [ [i, None] for i in range (exec_time) ]
+    tahoe_f1 = [ [i, None] for i in range (exec_time) ]
+    tahoe_f2 = [ [i, None] for i in range (exec_time) ]
+    vegas_f1 = [ [i, None] for i in range (exec_time) ]
+    vegas_f2 = [ [i, None] for i in range (exec_time) ]
+    # results   = [ [ [] for i in range(2) ] for i in range(len(types)) ]
+
     curr_vals = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
     for each in rtt:
         each[0] = float(each[0])
-    rtt.sort() # sort by time
+    rtt.sort()
     for each in rtt:
         time_ = float(each[0])
         rtt_ = float(each[6])
@@ -102,12 +145,71 @@ def calculateAvgRtt():
         curr_vals[types.index(type_)][flow_id][run_id] = rtt_
         avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
         if type_ == "Newreno":
-            append_to_list(newreno_f1, time_, avg) if (src == 0) else append_to_list(newreno_f2, time_, avg)
+            if (src == 0):
+                newreno_f1[int(time_) - 1][1] = avg
+            else:
+                newreno_f2[int(time_) - 1][1] = avg
         elif type_ == "Tahoe":
-            append_to_list(tahoe_f1, time_, avg) if (src == 0) else append_to_list(tahoe_f2, time_, avg)
+            if (src == 0):
+                tahoe_f1[int(time_) - 1][1] = avg
+            else:
+                tahoe_f2[int(time_) - 1][1] = avg
         else:
-            append_to_list(vegas_f1, time_, avg) if (src == 0) else append_to_list(vegas_f2, time_, avg)
-    
+            print(time_, avg)
+            if (src == 0):
+                vegas_f1[int(time_) - 1][1] = avg
+            else:
+                vegas_f2[int(time_) - 1][1] = avg
+
+
+    for i in range(len(newreno_f1)):
+        if i == 0:
+            prev = newreno_f1[0][1]
+            continue
+        if newreno_f1[i][1] == None:
+            newreno_f1[i][1] = prev
+        prev = newreno_f1[i][1]
+
+    for i in range(len(newreno_f2)):
+        if i == 0:
+            prev = newreno_f2[0][1]
+            continue
+        if newreno_f2[i][1] == None:
+            newreno_f2[i][1] = prev
+        prev = newreno_f2[i][1]
+
+    for i in range(len(tahoe_f1)):
+        if i == 0:
+            prev = tahoe_f1[0][1]
+            continue
+        if tahoe_f1[i][1] == None:
+            tahoe_f1[i][1] = prev
+        prev = tahoe_f1[i][1]
+
+    for i in range(len(tahoe_f2)):
+        if i == 0:
+            prev = tahoe_f2[0][1]
+            continue
+        if tahoe_f2[i][1] == None:
+            tahoe_f2[i][1] = prev
+        prev = tahoe_f2[i][1]
+
+    for i in range(len(vegas_f1)):
+        if i == 0:
+            prev = vegas_f1[0][1]
+            continue
+        if vegas_f1[i][1] == None:
+            vegas_f1[i][1] = prev
+        prev = vegas_f1[i][1]
+
+    for i in range(len(vegas_f2)):
+        if i == 0:
+            prev = vegas_f2[0][1]
+            continue
+        if vegas_f2[i][1] == None:
+            vegas_f2[i][1] = prev
+        prev = vegas_f2[i][1]
+
     newreno_result = []
     newreno_result.append(newreno_f1)
     newreno_result.append(newreno_f2)
@@ -123,15 +225,14 @@ def calculateAvgRtt():
 
 def calculateAvgCwnd():
     global cwnd
-    newreno_f1 = []
-    newreno_f2 = []
-    tahoe_f1 = []
-    tahoe_f2 = []
-    vegas_f1 = []
-    vegas_f2 = []
+    newreno_f1 = [ [i, None] for i in range (exec_time) ]
+    newreno_f2 = [ [i, None] for i in range (exec_time) ]
+    tahoe_f1 = [ [i, None] for i in range (exec_time) ]
+    tahoe_f2 = [ [i, None] for i in range (exec_time) ]
+    vegas_f1 = [ [i, None] for i in range (exec_time) ]
+    vegas_f2 = [ [i, None] for i in range (exec_time) ]
+    
 
-    # data structure for saving current values
-    # shape: [agent type][flow id][run number]
     curr_vals = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
     for each in cwnd:
         each[0] = float(each[0])
@@ -148,12 +249,71 @@ def calculateAvgCwnd():
         curr_vals[types.index(type_)][flow_id][run_id] = cwnd_
         avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
         if type_ == "Newreno":
-            append_to_list(newreno_f1, time_, avg) if (src == 0) else append_to_list(newreno_f2, time_, avg)
+            if (src == 0):
+                newreno_f1[int(time_) - 1][1] = avg
+            else:
+                newreno_f2[int(time_) - 1][1] = avg
         elif type_ == "Tahoe":
-            append_to_list(tahoe_f1, time_, avg) if (src == 0) else append_to_list(tahoe_f2, time_, avg)
+            if (src == 0):
+                tahoe_f1[int(time_) - 1][1] = avg
+            else:
+                tahoe_f2[int(time_) - 1][1] = avg
         else:
-            append_to_list(vegas_f1, time_, avg) if (src == 0) else append_to_list(vegas_f2, time_, avg)
-    
+            print(time_, avg)
+            if (src == 0):
+                vegas_f1[int(time_) - 1][1] = avg
+            else:
+                vegas_f2[int(time_) - 1][1] = avg
+
+
+    for i in range(len(newreno_f1)):
+        if i == 0:
+            prev = newreno_f1[0][1]
+            continue
+        if newreno_f1[i][1] == None:
+            newreno_f1[i][1] = prev
+        prev = newreno_f1[i][1]
+
+    for i in range(len(newreno_f2)):
+        if i == 0:
+            prev = newreno_f2[0][1]
+            continue
+        if newreno_f2[i][1] == None:
+            newreno_f2[i][1] = prev
+        prev = newreno_f2[i][1]
+
+    for i in range(len(tahoe_f1)):
+        if i == 0:
+            prev = tahoe_f1[0][1]
+            continue
+        if tahoe_f1[i][1] == None:
+            tahoe_f1[i][1] = prev
+        prev = tahoe_f1[i][1]
+
+    for i in range(len(tahoe_f2)):
+        if i == 0:
+            prev = tahoe_f2[0][1]
+            continue
+        if tahoe_f2[i][1] == None:
+            tahoe_f2[i][1] = prev
+        prev = tahoe_f2[i][1]
+
+    for i in range(len(vegas_f1)):
+        if i == 0:
+            prev = vegas_f1[0][1]
+            continue
+        if vegas_f1[i][1] == None:
+            vegas_f1[i][1] = prev
+        prev = vegas_f1[i][1]
+
+    for i in range(len(vegas_f2)):
+        if i == 0:
+            prev = vegas_f2[0][1]
+            continue
+        if vegas_f2[i][1] == None:
+            vegas_f2[i][1] = prev
+        prev = vegas_f2[i][1]
+
     newreno_result = []
     newreno_result.append(newreno_f1)
     newreno_result.append(newreno_f2)
@@ -189,7 +349,7 @@ def calculateAvgDropped():
         run_id = int(each[len(each) - 1]) - 1
         curr_vals[types.index(type_)][flow_id][run_id] += 1
         avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
-        avg /= time_
+        # avg /= time_
         if type_ == "Newreno":
             append_to_list(newreno_f1, time_, avg) if (flow_id == 0) else append_to_list(newreno_f2, time_, avg)
         elif type_ == "Tahoe":
@@ -320,14 +480,14 @@ def plotByCalc(_func, _title):
                 xy_data[j][flow_num]['x'].append(dt[flow_num][i][0])
                 xy_data[j][flow_num]['y'].append(dt[flow_num][i][1])
     
-    fig = plt.figure(figsize=(15,15))
+    fig = plt.figure(figsize=(20, 30))
     ax = fig.add_subplot(111)
     ax.set_xlabel("Time")
     ax.set_ylabel("y")
     ax.set_title(_title)
     for _type, dt1 in enumerate(xy_data):
         for _flow, dt2 in enumerate(dt1):
-            ax.scatter(dt2['x'], dt2['y'], alpha=0.55, label=f"{mapper[_type]} flow {_flow}")
+            ax.plot(dt2['x'], dt2['y'], alpha=0.55, label=f"{mapper[_type]} flow {_flow}")
     ax.legend()
     fig.savefig(f"Figs/{_title}")
     plt.show()
@@ -361,15 +521,15 @@ def plotByCalc2(_func, _title):
 
 if __name__ == '__main__':
     n_run = 10
-    exec_time = 500
+    exec_time = 1000
 
     execAllRuns()
     readAndParseAllData()
 
-    plotByCalc2(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)")
-    plotByCalc2(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)")
-    plotByCalc2(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)")
-    plotByCalc2(calculateAvgGoodput, f"Goodput Average({n_run} Runs, {exec_time} Time)")
+    # plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)")
+    plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)")
+    # plotByCalc2(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)")
+    # plotByCalc2(calculateAvgGoodput, f"Goodput Average({n_run} Runs, {exec_time} Time)")
 
     # each list below is 3d : [flows][records][fields]
     # rtt_newreno_result, rtt_tahoe_result, rtt_vegas_result = calculateAvgRtt()

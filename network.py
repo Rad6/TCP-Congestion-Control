@@ -329,16 +329,13 @@ def calculateAvgCwnd():
 
 def calculateAvgDropped():
     global dropped
-    newreno_f1 = []
-    newreno_f2 = []
-    tahoe_f1 = []
-    tahoe_f2 = []
-    vegas_f1 = []
-    vegas_f2 = []
+    newreno_f1 = [ [i, 0] for i in range (exec_time) ]
+    newreno_f2 = [ [i, 0] for i in range (exec_time) ]
+    tahoe_f1 = [ [i, 0] for i in range (exec_time) ]
+    tahoe_f2 = [ [i, 0] for i in range (exec_time) ]
+    vegas_f1 = [ [i, 0] for i in range (exec_time) ]
+    vegas_f2 = [ [i, 0] for i in range (exec_time) ]
 
-    # data structure for saving current values
-    # shape: [agent type][flow id][run number]
-    curr_vals = [ [ [0]*n_run for i in range(2) ] for i in range(len(types)) ]
     for each in dropped:
         each[1] = float(each[1])
     dropped.sort() # sort by time
@@ -346,17 +343,35 @@ def calculateAvgDropped():
         time_ = float(each[1])
         flow_id = int(each[7]) - 1
         type_ = each[len(each) - 2]
-        run_id = int(each[len(each) - 1]) - 1
-        curr_vals[types.index(type_)][flow_id][run_id] += 1
-        avg = sum(curr_vals[types.index(type_)][flow_id]) / len(curr_vals[types.index(type_)][flow_id])
-        # avg /= time_
         if type_ == "Newreno":
-            append_to_list(newreno_f1, time_, avg) if (flow_id == 0) else append_to_list(newreno_f2, time_, avg)
+            if (flow_id == 0):
+                newreno_f1[int(time_) - 1][1] += 1
+            else:
+                newreno_f2[int(time_) - 1][1] += 1
         elif type_ == "Tahoe":
-            append_to_list(tahoe_f1, time_, avg) if (flow_id == 0) else append_to_list(tahoe_f2, time_, avg)
+            if (flow_id == 0):
+                tahoe_f1[int(time_) - 1][1] += 1
+            else:
+                tahoe_f2[int(time_) - 1][1] += 1
         else:
-            append_to_list(vegas_f1, time_, avg) if (flow_id == 0) else append_to_list(vegas_f2, time_, avg)
-    
+            if (flow_id == 0):
+                vegas_f1[int(time_) - 1][1] += 1
+            else:
+                vegas_f2[int(time_) - 1][1] += 1
+
+    for i in range(len(newreno_f1)):
+        newreno_f1[i][1] /= n_run
+    for i in range(len(newreno_f2)):
+        newreno_f2[i][1] /= n_run
+    for i in range(len(tahoe_f1)):
+        tahoe_f1[i][1] /= n_run
+    for i in range(len(tahoe_f2)):
+        tahoe_f2[i][1] /= n_run
+    for i in range(len(vegas_f1)):
+        vegas_f1[i][1] /= n_run
+    for i in range(len(vegas_f2)):
+        vegas_f2[i][1] /= n_run
+
     newreno_result = []
     newreno_result.append(newreno_f1)
     newreno_result.append(newreno_f2)
@@ -527,8 +542,8 @@ if __name__ == '__main__':
     readAndParseAllData()
 
     # plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)")
-    plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)")
-    # plotByCalc2(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)")
+    # plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)")
+    plotByCalc(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)")
     # plotByCalc2(calculateAvgGoodput, f"Goodput Average({n_run} Runs, {exec_time} Time)")
 
     # each list below is 3d : [flows][records][fields]

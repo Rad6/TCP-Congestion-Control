@@ -132,7 +132,7 @@ proc doSimulation {type number verbose max_time} {
         }
     }
 
-    proc addToTrace {tcpSink outfile id} {
+    proc addGoodPutToTrace {tcpSink outfile id} {
         global ns
         set now [$ns now];
         set nbytes [$tcpSink set bytes_];
@@ -140,15 +140,15 @@ proc doSimulation {type number verbose max_time} {
         set time_incr 1.0
         set throughput [expr ($nbytes * 8.0 / 1000000) / $time_incr]
         puts  $outfile  "#### $now $throughput $id"
-        $ns at [expr $now+$time_incr] "addToTrace $tcpSink  $outfile $id"
+        $ns at [expr $now+$time_incr] "addGoodPutToTrace $tcpSink  $outfile $id"
     }
 
     $ns at 0.0 "$ftp1 start"
     $ns at 0.0 "$ftp2 start"
     $ns at 0.0 "$traceapp5 start"
     $ns at 0.0 "$traceapp6 start"
-    $ns at 0.0 "addToTrace $traceapp5 $trace_file 5"
-    $ns at 0.0 "addToTrace $traceapp6 $trace_file 6"
+    $ns at 0.0 "addGoodPutToTrace $traceapp5 $trace_file 5"
+    $ns at 0.0 "addGoodPutToTrace $traceapp6 $trace_file 6"
     $ns at $max_time "$ftp1 stop"
     $ns at $max_time "$ftp2 stop"
     $ns at [expr $max_time + 0.1] "finish $nam_dir $verbose"

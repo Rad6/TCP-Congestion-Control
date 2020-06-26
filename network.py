@@ -226,7 +226,7 @@ def calculateAvgGoodput():
 
     return newreno_result, tahoe_result, vegas_result
 
-def plotByCalc(_func, _title):
+def plotByCalc(_func, _title, _mode):
     mapper = {0 : 'NewReno', 1 : 'Tahoe', 2 : 'Vegas'}
     data = [[] for i in range(3)]
     data[0], data[1], data[2] = _func()
@@ -238,44 +238,31 @@ def plotByCalc(_func, _title):
                 xy_data[j][flow_num]['x'].append(dt[flow_num][i][0])
                 xy_data[j][flow_num]['y'].append(dt[flow_num][i][1])
     
-    fig = plt.figure(figsize=(50, 20))
-    ax = fig.add_subplot(111)
-    ax.set_xlabel("Time")
-    ax.set_ylabel("y")
-    ax.set_title(_title)
-    for _type, dt1 in enumerate(xy_data):
-        for _flow, dt2 in enumerate(dt1):
-            ax.plot(dt2['x'], dt2['y'], alpha=0.55, label=f"{mapper[_type]} flow {_flow}")
-    ax.legend()
-    fig.savefig(f"Figs/{_title}")
-    plt.show()
-
-def plotByCalc2(_func, _title):
-    mapper = {0 : 'NewReno', 1 : 'Tahoe', 2 : 'Vegas'}
-    data = [[] for i in range(3)]
-    data[0], data[1], data[2] = _func()
-    xy_data = [ [{'x' : [], 'y' : []} for _ in range(2)]  for _ in range(3)]
-    
-    for j, dt in enumerate(data):
-        for flow_num in range(2):
-            for i in range(len(dt[flow_num])):
-                xy_data[j][flow_num]['x'].append(dt[flow_num][i][0])
-                xy_data[j][flow_num]['y'].append(dt[flow_num][i][1])
-    
-    for _type, dt1 in enumerate(xy_data):
-
-        fig = plt.figure(figsize=(15,15))
+    if _mode == 'single':
+        fig = plt.figure(figsize=(50, 20))
         ax = fig.add_subplot(111)
         ax.set_xlabel("Time")
         ax.set_ylabel("y")
-        ax.set_title(f"{_title}_{mapper[_type]}")
-        for _flow, dt2 in enumerate(dt1):
-            print(len(dt2['x']))
-            ax.scatter(dt2['x'], dt2['y'], s=2, alpha=0.55, label=f"{mapper[_type]} flow {_flow}")
+        ax.set_title(_title)
+        for _type, dt1 in enumerate(xy_data):
+            for _flow, dt2 in enumerate(dt1):
+                ax.plot(dt2['x'], dt2['y'], alpha=0.55, label=f"{mapper[_type]} flow {_flow}")
         ax.legend()
-        fig.savefig(f"Figs/{_title}_{mapper[_type]}")
+        fig.savefig(f"Figs/{_title}")
         plt.show()
-
+    
+    elif _mode == 'double':
+        for _type, dt1 in enumerate(xy_data):
+            fig = plt.figure(figsize=(50,20))
+            ax = fig.add_subplot(111)
+            ax.set_xlabel("Time")
+            ax.set_ylabel("y")
+            ax.set_title(f"{_title}_{mapper[_type]}")
+            for _flow, dt2 in enumerate(dt1):
+                ax.plot(dt2['x'], dt2['y'], alpha=0.55, label=f"{mapper[_type]} flow {_flow}")
+            ax.legend()
+            fig.savefig(f"Figs/{_title}_{mapper[_type]}")
+            plt.show()
 
 if __name__ == '__main__':
     n_run = 10
@@ -284,7 +271,7 @@ if __name__ == '__main__':
     execAllRuns()
     readAndParseAllData()
 
-    plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)")
-    plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)")
-    plotByCalc(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)")
-    plotByCalc(calculateAvgGoodput, f"Goodput Average({n_run} Runs, {exec_time} Time)")
+    plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)", "single")
+    plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)", "single")
+    plotByCalc(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)", "single")
+    plotByCalc(calculateAvgGoodput, f"Goodput Average({n_run} Runs, {exec_time} Time)", "single")

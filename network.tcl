@@ -57,9 +57,10 @@ proc doSimulation {type number verbose max_time} {
     $ns duplex-link-op $n4 $n6 orient right-down
 
 
-    $ns queue-limit $n1 $n3 10
-    $ns queue-limit $n2 $n3 10
+    $ns queue-limit $n3 $n1 10
+    $ns queue-limit $n3 $n2 10
     $ns queue-limit $n3 $n4 10
+    $ns queue-limit $n4 $n3 10
     $ns queue-limit $n4 $n5 10
     $ns queue-limit $n4 $n6 10
 

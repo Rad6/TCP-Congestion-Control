@@ -238,7 +238,7 @@ def plotByCalc(_func, _title):
                 xy_data[j][flow_num]['x'].append(dt[flow_num][i][0])
                 xy_data[j][flow_num]['y'].append(dt[flow_num][i][1])
     
-    fig = plt.figure(figsize=(20, 30))
+    fig = plt.figure(figsize=(50, 20))
     ax = fig.add_subplot(111)
     ax.set_xlabel("Time")
     ax.set_ylabel("y")

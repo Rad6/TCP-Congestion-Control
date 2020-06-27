@@ -15,8 +15,9 @@ proc doSimulation {type number verbose max_time} {
     $ns trace-all $trace_file
 
     set nam_file [open $nam_dir w]
-    $ns namtrace-all $nam_file
-
+    if {$verbose == true} {
+        $ns namtrace-all $nam_file
+    }
 
     set n1 [$ns node]
     set n2 [$ns node]

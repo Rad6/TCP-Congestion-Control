@@ -266,14 +266,19 @@ def plotByCalc(_func, _title, _mode):
             plt.show()
 
 if __name__ == '__main__':
-    n_run = 5
+    n_run = 10
     exec_time = 1000
     fig_size = (10, 10)
 
     execAllRuns()
     readAndParseAllData()
 
-    plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)", "single")
-    plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)", "single")
+    plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)",    "single")
+    plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)",     "single")
     plotByCalc(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)", "single")
     plotByCalc(calculateAvgGoodput, f"Goodput Average({n_run} Runs, {exec_time} Time)", "single")
+
+    plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)",    "double")
+    plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)",     "double")
+    plotByCalc(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)", "double")
+    plotByCalc(calculateAvgGoodput, f"Goodput Average({n_run} Runs, {exec_time} Time)", "double")

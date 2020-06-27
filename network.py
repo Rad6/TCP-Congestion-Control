@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 tr_dir = "results/tr/"
 tcl_file = "network.tcl"
 types = ["Newreno", "Tahoe", "Vegas"]
+fig_size = (10, 10)
 n_run = 1
 exec_time = 10
 received = []
@@ -239,7 +240,7 @@ def plotByCalc(_func, _title, _mode):
                 xy_data[j][flow_num]['y'].append(dt[flow_num][i][1])
     
     if _mode == 'single':
-        fig = plt.figure(figsize=(50, 20))
+        fig = plt.figure(figsize=fig_size)
         ax = fig.add_subplot(111)
         ax.set_xlabel("Time")
         ax.set_ylabel("y")
@@ -253,7 +254,7 @@ def plotByCalc(_func, _title, _mode):
     
     elif _mode == 'double':
         for _type, dt1 in enumerate(xy_data):
-            fig = plt.figure(figsize=(50,20))
+            fig = plt.figure(figsize=fig_size)
             ax = fig.add_subplot(111)
             ax.set_xlabel("Time")
             ax.set_ylabel("y")
@@ -265,8 +266,9 @@ def plotByCalc(_func, _title, _mode):
             plt.show()
 
 if __name__ == '__main__':
-    n_run = 10
+    n_run = 5
     exec_time = 1000
+    fig_size = (10, 10)
 
     execAllRuns()
     readAndParseAllData()

@@ -1,5 +1,6 @@
 import os
 import matplotlib.pyplot as plt
+import pandas as pd
 
 tr_dir = "results/tr/"
 tcl_file = "network.tcl"
@@ -247,6 +248,8 @@ def plotByCalc(_func, _title, _mode):
         ax.set_title(_title)
         for _type, dt1 in enumerate(xy_data):
             for _flow, dt2 in enumerate(dt1):
+                pd.DataFrame({'time': dt2['x'], 'y': dt2['y']}).to_csv(
+                    f"results_data/{_title}_{mapper[_type]}_flow_{_flow}.csv", index=False)
                 ax.plot(dt2['x'], dt2['y'], alpha=0.55, label=f"{mapper[_type]} flow {_flow}")
         ax.legend()
         fig.savefig(f"Figs/{_title}")
@@ -260,6 +263,8 @@ def plotByCalc(_func, _title, _mode):
             ax.set_ylabel("y")
             ax.set_title(f"{_title}_{mapper[_type]}")
             for _flow, dt2 in enumerate(dt1):
+                pd.DataFrame({'time': dt2['x'], 'y': dt2['y']}).to_csv(
+                    f"results_data/{_title}_{mapper[_type]}_flow_{_flow}.csv", index=False)
                 ax.plot(dt2['x'], dt2['y'], alpha=0.55, label=f"{mapper[_type]} flow {_flow}")
             ax.legend()
             fig.savefig(f"Figs/{_title}_{mapper[_type]}")
@@ -278,7 +283,7 @@ if __name__ == '__main__':
     plotByCalc(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)", "single")
     plotByCalc(calculateAvgGoodput, f"Goodput Average({n_run} Runs, {exec_time} Time)", "single")
 
-    plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)",    "double")
-    plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)",     "double")
-    plotByCalc(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)", "double")
-    plotByCalc(calculateAvgGoodput, f"Goodput Average({n_run} Runs, {exec_time} Time)", "double")
+    # plotByCalc(calculateAvgCwnd,    f"CWND Average({n_run} Runs, {exec_time} Time)",    "double")
+    # plotByCalc(calculateAvgRtt,     f"RTT Average({n_run} Runs, {exec_time} Time)",     "double")
+    # plotByCalc(calculateAvgDropped, f"Dropped Average({n_run} Runs, {exec_time} Time)", "double")
+    # plotByCalc(calculateAvgGoodput, f"Goodput Average({n_run} Runs, {exec_time} Time)", "double")

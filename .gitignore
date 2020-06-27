@@ -1,5 +1,6 @@
 .vscode
 *.tr
 *.nam
+*.csv
 test.*
 *.png

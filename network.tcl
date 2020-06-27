@@ -14,8 +14,9 @@ proc doSimulation {type number verbose max_time} {
     set trace_file [open $trace_dir w]
     $ns trace-all $trace_file
 
-    set nam_file [open $nam_dir w]
+    set nam_file ""
     if {$verbose == true} {
+        set nam_file [open $nam_dir w]
         $ns namtrace-all $nam_file
     }
 
@@ -105,8 +106,8 @@ proc doSimulation {type number verbose max_time} {
         global ns trace_file nam_file
         $ns flush-trace
         close $trace_file
-        close $nam_file
         if {$show == true} {
+            close $nam_file
             exec nam  $nam_dir &
             exit
         } else {
